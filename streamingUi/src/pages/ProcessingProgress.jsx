@@ -7,7 +7,6 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import config from "../configuration/config";
 import { useQuery } from "react-query";
 import { useEffect, useState } from "react";
 import ProcessingProgressBar from "../components/ProcessingProgressBar";
@@ -20,9 +19,7 @@ const ProcessingProgressPage = () => {
   const { videoId } = useParams();
 
   const fetchVideoMetadata = () => {
-    return axios.get(
-      "http://" + config.apiBaseUrl + "/video/metadata/" + videoId
-    );
+    return axios.get("/api/video/metadata/" + videoId);
   };
   const { isLoading, data, isError, error } = useQuery(
     "video",
@@ -31,9 +28,12 @@ const ProcessingProgressPage = () => {
 
   useEffect(() => {
     if (data?.data?.processing) {
-      const ws = new WebSocket(
-        `ws://${config.apiBaseUrl}/progress/${data.data.id}`
-      );
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const host = window.location.host;
+      const wsPath = `/api/progress/${data.data.id}`;
+      const wsUrl = `${protocol}//${host}${wsPath}`;
+
+      const ws = new WebSocket(wsUrl);
       setWebSocket(ws);
     }
   }, [data]);
@@ -86,15 +86,15 @@ const ProcessingProgressPage = () => {
         sx={{
           padding: "20px",
           display: "flex",
-          justifyContent: "space-around",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         <Card elevation={1} sx={{ width: "40%" }}>
           <CardMedia
             component="img"
-            image={
-              "http://" + config.apiBaseUrl + "/video/thumbnail/" + videoId
-            }
+            image={"/api/video/thumbnail/" + videoId}
             alt={data?.data.name + " video thumbnail"}
           />
         </Card>

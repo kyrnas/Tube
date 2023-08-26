@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import ReactPlayer from "react-player";
-import config from "../configuration/config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -38,17 +37,13 @@ const UploadPage = () => {
     formData.append("name", videoName); // Pass the video name as a request parameter
 
     try {
-      const response = await axios.post(
-        `http://${config.apiBaseUrl}/video`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          onUploadProgress: (progressEvent) => {
-            const progress = (progressEvent.loaded / progressEvent.total) * 100;
-            setUploadProgress(progress);
-          },
-        }
-      );
+      const response = await axios.post(`/api/video`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (progressEvent) => {
+          const progress = (progressEvent.loaded / progressEvent.total) * 100;
+          setUploadProgress(progress);
+        },
+      });
       newVideoId = response.data;
     } catch (error) {
       console.error("Error uploading video:", error);

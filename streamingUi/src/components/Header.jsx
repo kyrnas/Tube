@@ -12,6 +12,7 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { uiActions } from "../store/ui-slice";
+import MediaQuery from "react-responsive";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -83,10 +84,13 @@ export default function Header() {
                 textDecoration: "inherit",
                 display: "flex",
                 alignItems: "center",
+                marginRight: "20px",
               }}
             >
               <SvgIcon component={YouTubeIcon} fontSize="large" />
-              <Typography variant="h5">Premium</Typography>
+              <MediaQuery query="(max-device-width: 300px)">
+                <Typography variant="h5">Premium</Typography>
+              </MediaQuery>
             </Link>
           </Box>
           <Search>

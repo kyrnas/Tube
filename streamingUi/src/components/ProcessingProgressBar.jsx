@@ -5,7 +5,7 @@ const ProcessingProgressBar = ({ value, quality }) => {
     <Box sx={{ margin: "10px" }}>
       <Typography variant="h6">{quality}</Typography>
       <Box sx={{ position: "relative", display: "inline-flex" }}>
-        <CircularProgress variant="determinate" value={value} />
+        <CircularProgress variant="determinate" value={parseInt(value)} />
         <Box
           sx={{
             top: 0,

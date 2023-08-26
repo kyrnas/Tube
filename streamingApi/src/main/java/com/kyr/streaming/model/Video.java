@@ -17,6 +17,7 @@ public class Video {
     @Column(unique = true)
     private String name;
 
+    @Column(name = "original_filename")
     private String originalFilename;
 
     private boolean processing;

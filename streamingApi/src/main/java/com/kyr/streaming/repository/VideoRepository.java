@@ -1,7 +1,6 @@
 package com.kyr.streaming.repository;
 
 import com.kyr.streaming.model.Video;
-import com.kyr.streaming.model.VideoMetadata;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -14,9 +13,7 @@ public interface VideoRepository extends CrudRepository<Video, UUID> {
 
     boolean existsByName(String name);
 
-    @Query("SELECT new com.kyr.streaming.model.VideoMetadata(v.id, v.name, v.processing) FROM Video v")
-    Page<VideoMetadata> getAllNames(Pageable pageable);
+    Page<Video> findAll(Pageable pageable);
 
-    @Query("SELECT new com.kyr.streaming.model.VideoMetadata(v.id, v.name, v.processing) FROM Video v WHERE v.id = ?1")
-    VideoMetadata getVideoMetadata(UUID id);
+    Video findVideoById(UUID id);
 }

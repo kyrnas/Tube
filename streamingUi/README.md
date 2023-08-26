@@ -1,8 +1,16 @@
-# React + Vite
+# React + Vite Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The UI for the Tube application. Contains the following functionality:
 
-Currently, two official plugins are available:
+1. Upload new videos
+1. Motitor the progress of processing the video after it's upload
+1. List the available videos
+1. Watch the videos by streaming them in the browser
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## How to run
+
+- Make sure NodeJS is installed
+- Run the `npm install` command to install all the dependencies
+- Make sure that the backend portion of this application is running locally
+- Run the `npm run dev` command to start the development server
+- Open http://localhost:5173/ to access the application

@@ -1,13 +1,12 @@
 import { Box, Grid, Typography, Skeleton, Card } from "@mui/material";
 import VideoCard from "./VideoCard";
 import { useQuery } from "react-query";
-import config from "../configuration/config";
 import { Link } from "react-router-dom";
 import { AddCircleOutlineOutlined } from "@mui/icons-material";
 import axios from "axios";
 
 const fetchVideos = () => {
-  return axios.get("http://" + config.apiBaseUrl + "/video/all");
+  return axios.get("/api/video/all");
 };
 
 const VideoList = () => {

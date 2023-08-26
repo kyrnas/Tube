@@ -1,14 +1,10 @@
 package com.kyr.streaming.service;
 
 
-import com.github.kokorin.jaffree.ffmpeg.FFmpeg;
-import com.github.kokorin.jaffree.ffmpeg.UrlInput;
-import com.github.kokorin.jaffree.ffmpeg.UrlOutput;
 import com.kyr.streaming.exception.UknownQualityRequestedException;
 import com.kyr.streaming.exception.VideoAlreadyExistsException;
 import com.kyr.streaming.exception.VideoNotFoundException;
 import com.kyr.streaming.model.Video;
-import com.kyr.streaming.model.VideoMetadata;
 import com.kyr.streaming.repository.VideoRepository;
 import com.kyr.streaming.util.VideoTranscoder;
 import lombok.AllArgsConstructor;
@@ -103,14 +99,14 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public Page<VideoMetadata> getAllVideoNames(int page, int size) {
+    public Page<Video> getAllVideoNames(int page, int size) {
         Pageable paging = PageRequest.of(page, size);
-        return videoRepository.getAllNames(paging);
+        return videoRepository.findAll(paging);
     }
 
     @Override
-    public VideoMetadata getVideoMetadata(UUID id){
-        return videoRepository.getVideoMetadata(id);
+    public Video getVideoMetadata(UUID id){
+        return videoRepository.findVideoById(id);
     }
 
     @Override

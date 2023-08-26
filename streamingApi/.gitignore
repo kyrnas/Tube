@@ -35,5 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
 videos/
 db/
+
+src/main/resources/application-prod.properties

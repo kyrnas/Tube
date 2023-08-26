@@ -1,7 +1,6 @@
 package com.kyr.streaming.controller;
 
 import com.kyr.streaming.model.Video;
-import com.kyr.streaming.model.VideoMetadata;
 import com.kyr.streaming.service.VideoService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -19,7 +18,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("video")
 @AllArgsConstructor
-@CrossOrigin
 public class VideoController {
     private VideoService videoService;
 
@@ -42,13 +40,13 @@ public class VideoController {
     }
 
     @GetMapping("all")
-    public ResponseEntity<Page<VideoMetadata>> getAllVideoNames(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "40") int size){
+    public ResponseEntity<Page<Video>> getAllVideoNames(@RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "40") int size){
         return ResponseEntity
                 .ok(videoService.getAllVideoNames(page, size));
     }
 
     @GetMapping("/metadata/{id}")
-    public ResponseEntity<VideoMetadata> getVideoMetadata(@PathVariable("id") UUID id) {
+    public ResponseEntity<Video> getVideoMetadata(@PathVariable("id") UUID id) {
         return ResponseEntity
                 .ok(videoService.getVideoMetadata(id));
     }

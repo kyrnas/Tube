@@ -1,5 +1,4 @@
 import ReactPlayer from "react-player";
-import config from "../../configuration/config";
 import { formatTime } from "./format";
 import VideoPlayerControls from "./VideoPlayerControls";
 import { Box, Container, Typography } from "@mui/material";
@@ -11,9 +10,7 @@ import "./VideoPlayer.css";
 
 const VideoPlayer = ({ videoId }) => {
   const fetchVideoMetadata = () => {
-    return axios.get(
-      "http://" + config.apiBaseUrl + "/video/metadata/" + videoId
-    );
+    return axios.get("/api/video/metadata/" + videoId);
   };
   const { isLoading, data, isError, error } = useQuery(
     "video",
@@ -22,6 +19,7 @@ const VideoPlayer = ({ videoId }) => {
 
   const videoPlayerRef = useRef();
   const playerContainerRef = useRef();
+  const timeoutIdRef = useRef();
 
   const currentTime = videoPlayerRef.current
     ? videoPlayerRef.current.getCurrentTime()
@@ -41,8 +39,9 @@ const VideoPlayer = ({ videoId }) => {
     volume: 0.5,
     played: 0,
     seeking: false,
-    buffer: true,
+    buffer: false,
     quality: "1080p",
+    showControls: true,
   });
 
   const {
@@ -54,6 +53,7 @@ const VideoPlayer = ({ videoId }) => {
     seeking,
     buffer,
     quality,
+    showControls,
   } = videoState;
 
   const playPauseHandler = () => {
@@ -122,6 +122,26 @@ const VideoPlayer = ({ videoId }) => {
     screenfull.toggle(playerContainerRef.current);
   };
 
+  const handleMouseMove = () => {
+    clearTimeout(timeoutIdRef.current);
+    setVideoState((prevState) => {
+      return { ...prevState, showControls: true };
+    });
+
+    timeoutIdRef.current = setTimeout(() => {
+      setVideoState((prevState) => {
+        return { ...prevState, showControls: false };
+      });
+    }, 2000); // 2000 milliseconds (2 seconds)
+  };
+
+  const handleMouseLeave = () => {
+    clearTimeout(timeoutIdRef.current);
+    setVideoState((prevState) => {
+      return { ...prevState, showControls: false };
+    });
+  };
+
   if (!data || data.data == "" || isError) {
     return <Typography variant="h2">Video not found</Typography>;
   }
@@ -131,31 +151,28 @@ const VideoPlayer = ({ videoId }) => {
   }
 
   return (
-    <Box className="video_container">
+    <div className="video_container">
       <Container maxWidth="lg" justify="center">
-        <Box className="player__wrapper" ref={playerContainerRef}>
-          <div onClick={playPauseHandler}>
-            <ReactPlayer
-              ref={videoPlayerRef}
-              className="player"
-              url={
-                "http://" +
-                config.apiBaseUrl +
-                "/video/" +
-                videoId +
-                `?quality=${quality}`
-              }
-              width={"100%"}
-              height={"100%"}
-              playing={playing}
-              muted={muted}
-              volume={volume}
-              onProgress={progressHandler}
-              onEnded={playPauseHandler}
-              onBuffer={bufferStartHandler}
-              onBufferEnd={bufferEndHandler}
-            />
-          </div>
+        <div
+          className="player__wrapper"
+          ref={playerContainerRef}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+          <ReactPlayer
+            ref={videoPlayerRef}
+            className="player"
+            url={"/api/video/" + videoId + `?quality=${quality}`}
+            width={"100%"}
+            height={"100%"}
+            playing={playing}
+            muted={muted}
+            volume={volume}
+            onProgress={progressHandler}
+            onEnded={playPauseHandler}
+            onBuffer={bufferStartHandler}
+            onBufferEnd={bufferEndHandler}
+          />
           <VideoPlayerControls
             onPlayPause={playPauseHandler}
             playing={playing}
@@ -173,10 +190,11 @@ const VideoPlayer = ({ videoId }) => {
             onQualityChanged={changeQualityHandler}
             videoName={data?.data?.name}
             onFullScreenToggle={fullscreenHandler}
+            showControls={showControls}
           />
-        </Box>
+        </div>
       </Container>
-    </Box>
+    </div>
   );
 };
 
