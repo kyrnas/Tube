@@ -23,5 +23,5 @@ This application focuses on copying the core functionality of YouTube: uploading
   * EC2 for running the Spring Boot Server
   * S3 for hosting a static website
   * PostgreSQL RDS for video metadata database
-  * CloudFront for CDN + serving the back-end and front-end under the same hostname (allows relative pathing on the front-end as well as setting up CORS)
+  * CloudFront for CDN + serving the back-end and front-end under the same domain (allows relative pathing on the front-end as well as setting up CORS) [Why use a single domain for both](https://advancedweb.hu/why-use-a-single-domain-for-the-backend-and-the-frontend/#:~:text=Same%20origin%20means%20easier%20configuration,and%20a%20more%20secure%20setup&text=Usually%2C%20a%20web%20application%20consists,example%2C%20and%20built%20with%20WebPack.)
   * Route53 for domain
