@@ -17,6 +17,7 @@ import {
   Drawer,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Toolbar,
@@ -111,9 +112,8 @@ const NavDrawer = ({ drawerWidth, expandNav }) => {
       <Box sx={{ overflow: "auto" }}>
         <List>
           {topMenuItems.map((item) => (
-            <ListItem
+            <ListItemButton
               key={item.text}
-              button
               onClick={() => navigate(item.path)}
               sx={{
                 ...listItemStyle,
@@ -129,15 +129,14 @@ const NavDrawer = ({ drawerWidth, expandNav }) => {
                 {item.icon}
               </ListItemIcon>
               {expandNav ? <ListItemText primary={item.text} /> : null}
-            </ListItem>
+            </ListItemButton>
           ))}
         </List>
         <Divider />
         <List>
           {menuItems.map((item) => (
-            <ListItem
+            <ListItemButton
               key={item.text}
-              button
               onClick={() => navigate(item.path)}
               sx={{
                 ...listItemStyle,
@@ -155,15 +154,14 @@ const NavDrawer = ({ drawerWidth, expandNav }) => {
                 {item.icon}
               </ListItemIcon>
               {expandNav ? <ListItemText primary={item.text} /> : null}
-            </ListItem>
+            </ListItemButton>
           ))}
         </List>
         <Divider />
         <List>
           {menuTwoItems.map((item) => (
-            <ListItem
+            <ListItemButton
               key={item.text}
-              button
               onClick={() => navigate(item.path)}
               sx={{
                 ...listItemStyle,
@@ -181,7 +179,7 @@ const NavDrawer = ({ drawerWidth, expandNav }) => {
                 {item.icon}
               </ListItemIcon>
               {expandNav ? <ListItemText primary={item.text} /> : null}
-            </ListItem>
+            </ListItemButton>
           ))}
         </List>
         <Divider />

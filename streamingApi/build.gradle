@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.kyr'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
 	sourceCompatibility = '17'
@@ -26,7 +26,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'com.github.kokorin.jaffree:jaffree:2022.06.03'
+	implementation 'software.amazon.awssdk:s3:2.29.39'
+	implementation 'software.amazon.awssdk:mediaconvert:2.29.39'
 	implementation 'com.google.code.gson:gson:2.10.1'
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.postgresql:postgresql'

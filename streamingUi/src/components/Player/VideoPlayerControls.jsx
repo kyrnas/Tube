@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Pause,
   PlayArrow,
@@ -54,7 +54,12 @@ const VideoPlayerControls = (props) => {
           <Box className="bottom__container">
             <Box className="slider__container">
               <Slider
-                sx={{ color: "#9556CC" }}
+                sx={{
+                  color: "red",
+                  "& .MuiSlider-thumb": {
+                    transition: "0.3s cubic-bezier(.47,1.64,.41,.8)",
+                  },
+                }}
                 min={0}
                 max={100}
                 value={props.played * 100}
@@ -85,7 +90,7 @@ const VideoPlayerControls = (props) => {
                 <Slider
                   sx={{
                     width: "100px",
-                    color: "#9556CC",
+                    color: "red",
                     padding: "inherit",
                     marginLeft: "15px",
                     // [`.MuiSlider-thumb:not(.MuiSlider-active)`]: {
@@ -129,9 +134,12 @@ const VideoPlayerControls = (props) => {
                       <MenuItem
                         key={item}
                         onClick={() => handleCloseMenu(item)}
+                        selected={item === props.quality}
                         sx={{
-                          backgroundColor:
-                            props.quality === item ? red[700] : null,
+                          "& MuiButtonBase-root-MuiMenuItem-root.Mui-selected":
+                            {
+                              backgroundColor: red[700],
+                            },
                         }}
                       >
                         {item}
@@ -143,8 +151,8 @@ const VideoPlayerControls = (props) => {
                   className="icon__btn"
                   onClick={handleOpenMenu}
                   aria-controls={open ? "basic-menu" : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? "true" : undefined}
+                  aria-haspopup="menu"
+                  aria-expanded={open}
                 >
                   <SettingsOutlined />
                 </div>

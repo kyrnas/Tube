@@ -7,11 +7,11 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:8080",
+        target: "http://kyrstreams.com/",
         changeOrigin: true,
       },
       "/api/progress": {
-        target: "ws://localhost:8080",
+        target: "ws://kyrstreams.com/",
         ws: true,
       },
     },

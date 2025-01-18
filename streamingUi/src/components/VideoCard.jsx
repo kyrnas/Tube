@@ -5,7 +5,7 @@ const VideoCard = ({ id, title }) => {
     <Card elevation={1}>
       <CardMedia
         component="img"
-        image={"/api/video/thumbnail/" + id}
+        image={`${import.meta.env.VITE_CDN_URL}/${id}/thumbnail.jpg`}
         alt={title + " video thumbnail"}
       />
       <CardHeader title={title} titleTypographyProps={{ noWrap: true }} />

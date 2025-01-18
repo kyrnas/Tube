@@ -53,7 +53,7 @@ const UploadPage = () => {
     }
     const forwardTimeout = setTimeout(() => {
       navigate(`/upload/${newVideoId}`);
-    }, 3000);
+    }, 2000);
     setShowSuccessMessage(true);
     setUploadProgress(null);
   };
@@ -138,6 +138,15 @@ const UploadPage = () => {
             )}%`}</Typography>
           </Box>
         </Box>
+      )}
+      {uploadProgress && uploadProgress === 100 ? (
+        <Box>
+          <Typography>
+            Upload complete, now pushing to S3. Please wait...
+          </Typography>
+        </Box>
+      ) : (
+        ""
       )}
       <Snackbar
         open={showSucessMessage}

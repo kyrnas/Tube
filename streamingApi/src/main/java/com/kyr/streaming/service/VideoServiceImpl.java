@@ -9,82 +9,40 @@ import com.kyr.streaming.repository.VideoRepository;
 import com.kyr.streaming.util.VideoTranscoder;
 import lombok.AllArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.*;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 public class VideoServiceImpl implements VideoService {
+    @Autowired
     private VideoRepository videoRepository;
+
+    @Autowired
     private VideoProcessingService videoProcessingService;
 
-    @Override
-    public byte[] getVideo(UUID id, String quality) throws VideoNotFoundException {
-        if (videoRepository.findById(id).isEmpty()){
-            throw new VideoNotFoundException();
-        }
-        File reencodedVideo;
-        byte[] result;
-        switch (quality) {
-            case "1080p":
-                reencodedVideo = new File("videos/" + id.toString() + "/1080" + ".mp4");
-                try (InputStream is = new FileInputStream(reencodedVideo)) {
-                    result = is.readAllBytes();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case "720p":
-                reencodedVideo = new File("videos/" + id.toString() + "/720" + ".mp4");
-                try (InputStream is = new FileInputStream(reencodedVideo)) {
-                    result = is.readAllBytes();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case "480p":
-                reencodedVideo = new File("videos/" + id.toString() + "/480" + ".mp4");
-                try (InputStream is = new FileInputStream(reencodedVideo)) {
-                    result = is.readAllBytes();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            case "360p":
-                reencodedVideo = new File("videos/" + id.toString() + "/360" + ".mp4");
-                try (InputStream is = new FileInputStream(reencodedVideo)) {
-                    result = is.readAllBytes();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                break;
-            default:
-                throw new UknownQualityRequestedException();
-        }
-        return result;
-    }
+    @Autowired
+    private VideoTranscoder videoTranscoder;
 
-    @Override
-    public byte[] getThumbnail(UUID id) throws VideoNotFoundException {
-        if (videoRepository.findById(id).isEmpty()){
-            throw new VideoNotFoundException();
-        }
-        File thumbnailFile = new File("videos/" + id + "/" + "thumbnail" + ".png");
-        byte[] result;
-        try (InputStream is = new FileInputStream(thumbnailFile)) {
-            result = is.readAllBytes();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return result;
-    }
+    @Autowired
+    private S3Client s3Client;
+
+    @Value("${aws.source.bucket.name}")
+    private String sourceBucketName;
+
+    @Value("${aws.videos.bucket.name}")
+    private String videosBucketName;
 
     @Override
     public Video saveVideo(MultipartFile file, String name) throws IOException {
@@ -92,9 +50,15 @@ public class VideoServiceImpl implements VideoService {
             throw new VideoAlreadyExistsException();
         }
         Video video = new Video(name, file.getOriginalFilename());
-        VideoTranscoder.createThumbnail(video, file.getBytes());
         video = videoRepository.save(video);
-        videoProcessingService.processVideo(video, file.getBytes());
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(sourceBucketName)
+                .key(video.getId().toString() + "/" + file.getOriginalFilename())
+                .build();
+        String sourceFile = "s3://" + sourceBucketName + "/" + video.getId().toString() + "/" + file.getOriginalFilename();
+        String destFile = "s3://" + videosBucketName + "/" + video.getId().toString();
+        s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
+        videoProcessingService.processVideo(video, sourceFile, destFile);
         return video;
     }
 

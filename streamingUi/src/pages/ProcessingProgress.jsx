@@ -1,15 +1,10 @@
-import {
-  Box,
-  Card,
-  CardMedia,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
+import { Box, Card, CardMedia, Typography } from "@mui/material";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useEffect, useState } from "react";
 import ProcessingProgressBar from "../components/ProcessingProgressBar";
+import Image from "react-graceful-image";
 
 const qualityList = ["1080p", "720p", "480p", "360p"];
 
@@ -21,22 +16,34 @@ const ProcessingProgressPage = () => {
   const fetchVideoMetadata = () => {
     return axios.get("/api/video/metadata/" + videoId);
   };
-  const { isLoading, data, isError, error } = useQuery(
-    "video",
-    fetchVideoMetadata
-  );
+
+  const startPollingVideoProgress = () => {
+    return axios.post("/api/video/start-polling/" + videoId);
+  };
+
+  const { isLoading, data } = useQuery(`video/${videoId}`, fetchVideoMetadata);
+
+  const {
+    mutate,
+    isLoading: pollingLoading,
+    data: pollingData,
+  } = useMutation(`video-polling/${videoId}`, startPollingVideoProgress);
 
   useEffect(() => {
     if (data?.data?.processing) {
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const host = window.location.host;
-      const wsPath = `/api/progress/${data.data.id}`;
-      const wsUrl = `${protocol}//${host}${wsPath}`;
-
-      const ws = new WebSocket(wsUrl);
-      setWebSocket(ws);
+      mutate();
     }
   }, [data]);
+
+  useEffect(() => {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const host = window.location.host;
+    const wsPath = `/api/progress/${videoId}`;
+    const wsUrl = `${protocol}//${host}${wsPath}`;
+
+    const ws = new WebSocket(wsUrl);
+    setWebSocket(ws);
+  }, [pollingData]);
 
   // Effect to clean up WebSocket connection when the component is unmounted
   useEffect(() => {
@@ -72,7 +79,11 @@ const ProcessingProgressPage = () => {
       {qualityList.map((item) => (
         <ProcessingProgressBar
           key={item}
-          value={videoProgress ? videoProgress[item].toFixed(0) : 0}
+          value={
+            videoProgress && videoProgress[item] !== "null"
+              ? videoProgress[item]
+              : 0
+          }
           quality={item}
         />
       ))}
@@ -91,13 +102,18 @@ const ProcessingProgressPage = () => {
           alignItems: "center",
         }}
       >
-        <Card elevation={1} sx={{ width: "40%" }}>
+        {/* <Card elevation={1} sx={{ width: "40%" }}>
           <CardMedia
             component="img"
-            image={"/api/video/thumbnail/" + videoId}
+            image={`${import.meta.env.VITE_CDN_URL}/${videoId}/thumbnail.jpg`}
             alt={data?.data.name + " video thumbnail"}
           />
-        </Card>
+        </Card> */}
+        <Image
+          style={{ width: "40%" }}
+          src={`${import.meta.env.VITE_CDN_URL}/${videoId}/thumbnail.jpg`}
+          alt={data?.data.name + " video thumbnail"}
+        />
         {ProgressBars}
       </Box>
     </>

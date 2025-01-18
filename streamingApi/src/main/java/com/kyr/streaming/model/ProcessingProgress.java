@@ -6,21 +6,24 @@ import lombok.Data;
 @Data
 public class ProcessingProgress {
     @SerializedName("1080p")
-    Double fullHd;
+    String fullHd;
 
     @SerializedName("720p")
-    Double hd;
+    String hd;
 
     @SerializedName("480p")
-    Double sd;
+    String sd;
 
     @SerializedName("360p")
-    Double ld;
+    String ld;
+
+    @SerializedName("message")
+    String message;
 
     public ProcessingProgress() {
-        this.fullHd = 0.;
-        this.hd = 0.;
-        this.sd = 0.;
-        this.ld = 0.;
+        this.fullHd = "0";
+        this.hd = "0";
+        this.sd = "0";
+        this.ld = "0";
     }
 }

@@ -1,6 +1,7 @@
 package com.kyr.streaming.controller;
 
 import com.kyr.streaming.model.Video;
+import com.kyr.streaming.service.MediaConvertPollingService;
 import com.kyr.streaming.service.VideoService;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -19,24 +20,13 @@ import java.util.UUID;
 @RequestMapping("video")
 @AllArgsConstructor
 public class VideoController {
-    private VideoService videoService;
+    private final VideoService videoService;
+    private final MediaConvertPollingService pollingService;
 
     @PostMapping()
     public ResponseEntity<UUID> saveVideo(@RequestParam("file") MultipartFile file, @RequestParam("name") String name) throws IOException {
         Video video = videoService.saveVideo(file, name);
         return ResponseEntity.ok(video.getId());
-    }
-
-    @GetMapping("{id}")
-    public ResponseEntity<Resource> getVideoById(@PathVariable("id") UUID id, @RequestParam(value = "quality", defaultValue = "1080p") String quality) {
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(new ByteArrayResource(videoService.getVideo(id, quality)));
-    }
-
-    @GetMapping("/thumbnail/{id}")
-    public ResponseEntity<Resource> getVideoThumbnail(@PathVariable("id") UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(new ByteArrayResource(videoService.getThumbnail(id)));
     }
 
     @GetMapping("all")
@@ -55,5 +45,12 @@ public class VideoController {
     public ResponseEntity<String> deleteVideo(@PathVariable("id") UUID id){
         String result = videoService.deleteVideo(id);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/start-polling/{videoId}")
+    public String startPolling(@PathVariable UUID videoId) {
+        Video video = videoService.getVideoMetadata(videoId);
+        pollingService.pollJobStatus(video);
+        return "Polling initiated for job ID: " + videoId.toString();
     }
 }

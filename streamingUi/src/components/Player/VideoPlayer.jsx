@@ -127,7 +127,6 @@ const VideoPlayer = ({ videoId }) => {
     setVideoState((prevState) => {
       return { ...prevState, showControls: true };
     });
-
     timeoutIdRef.current = setTimeout(() => {
       setVideoState((prevState) => {
         return { ...prevState, showControls: false };
@@ -162,7 +161,9 @@ const VideoPlayer = ({ videoId }) => {
           <ReactPlayer
             ref={videoPlayerRef}
             className="player"
-            url={"/api/video/" + videoId + `?quality=${quality}`}
+            url={`${
+              import.meta.env.VITE_CDN_URL
+            }/${videoId}/video_${quality}/video.m3u8`}
             width={"100%"}
             height={"100%"}
             playing={playing}

@@ -2,7 +2,6 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import RootLayout from "./pages/Root";
 import ErrorPage from "./pages/Error";
-import Demo from "./pages/Demo";
 import PageNotFound from "./pages/PageNotFound";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -39,7 +38,6 @@ function App() {
                   <Route path="" element={<UploadPage />} />
                   <Route path=":videoId" element={<ProcessingProgressPage />} />
                 </Route>
-                <Route path="demo" element={<Demo />} />
                 <Route path="*" element={<PageNotFound />} />
               </Route>
             </Routes>

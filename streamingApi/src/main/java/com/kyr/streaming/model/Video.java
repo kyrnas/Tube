@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Video {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(unique = true)
@@ -21,6 +21,18 @@ public class Video {
     private String originalFilename;
 
     private boolean processing;
+
+    @Column(name = "full_hd_job_id")
+    private String fullHdJobId;
+
+    @Column(name = "hd_job_id")
+    private String hdJobId;
+
+    @Column(name = "sd_job_id")
+    private String sdJobId;
+
+    @Column(name = "ld_job_id")
+    private String ldJodId;
 
     public Video (String name, String originalFilename) {
         this.id = UUID.randomUUID();
